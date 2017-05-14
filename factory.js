@@ -13,10 +13,14 @@ function(context, args)
 	let bots = #db.f({ script:'factory', file:'bots' }).first().obj;
   	let strings = #db.f({ script:'factory', file:'strings' }).first().obj;
 
-	if (caller != 'device' && caller != 'lodash') {
-		out.push('The game is closed for maintenance, sorry for the inconvenience.\nPlease try again in a few moments.');
-		return out;
-	}
+
+	//if (caller != 'device' && caller != 'lodash') {
+	//	out.push('The game is closed for maintenance, sorry for the inconvenience.\nPlease try again in a few moments.');
+	//	return out;
+	//}
+
+	//return JSON.stringify(strings);
+
 	if (safe_caller() == false) return { ok:false, msg:"For security, please use your own automation script" };
 
 	if (caller == 'device' && args && args.as) {
@@ -49,13 +53,13 @@ function(context, args)
 		//return { log:log, debug:gamestate };
 		owned = gamestate.owned;
 	}
-//return { ok:false, msg:out };
+	//return { ok:false, msg:out };
 
 	if (args) {
 
 		// Free spin?
 		if (args.bonus === true && owned.bonus === true) {
-			out.concat(strings['bonus_done']);
+			out=out.concat(strings['bonus_done']);
 			let r = l.rand_int(1,5);
 			//out.push('r='+r);
 			switch (r) {
@@ -94,7 +98,7 @@ function(context, args)
 			//if (caller != 'device') return "Hang on, this feature is being tested. Please try again in a few moments.";
 			if (m._gt(owned.cakebots, "0")) {
 				if (args.confirm == true) {
-					out.concat(strings['restart_done']);
+				    out=out.concat(strings['restart_done']);
 					let multiplier = (owned.multiplier || 1) * 2;
 					let restarts = (owned.restarts || 1);
 					let legacy = m._add(owned.nanobots, (owned.legacy || "0"));
@@ -102,20 +106,21 @@ function(context, args)
 					recalc(gamestate);
 					owned = gamestate.owned;
 				} else {
-					out.concat(strings['restart_confirm']);
+					out=out.concat(strings['restart_confirm']);
 					return out;
 				}
 			} else {
-				out.concat(strings['restart_deny']);
+				out=out.concat(strings['restart_deny']);
 			}
 		}
+		//return out;
 
 		if (args.reset == true) {
 			if (args.confirm == true) {
 				#db.r({ script:'factory', player:context.caller });
 				return "Game reset.";
 			} else {
-				out.concat(strings['reset_confirm']);
+				out=out.concat(strings['reset_confirm']);
 			}
 		}
 
@@ -129,7 +134,7 @@ function(context, args)
 			let res = unsorted.sort( function(a,b) { return m._cmp(b.score, a.score) } );
 			//out.push('res='+JSON.stringify(res));
 			let found = false;
-			out.concat(strings['lb_header']);
+			out=out.concat(strings['lb_header']);
 			for (let i in res) {
 				let acct = res[i];
 				if (acct.player != caller) {
@@ -154,12 +159,12 @@ function(context, args)
 				if (acct.player == caller) found = true;
 				//out.push('device.factory { attack:"'+acct.player+'", with:'+owned.nanobots+' }');
 			}
-			out.concat(strings['lb_footer']);
+			out=out.concat(strings['lb_footer']);
 			return out;
 		}
 
 		if (args.help == true) {
-			out.concat(strings['help']);
+			out=out.concat(strings['help']);
 			return out;
 		}
 
@@ -187,7 +192,7 @@ function(context, args)
 				let cost = bots[bot_s].cost;
 				out.push('\nManually creating '+hrc(p2c, bot_s)+' requires '+hrc(cost, sub_s)+' and '+hrc(cost, 'nanites')+' at this time.');
 			} else {
-				out.concat(strings['nanobot_lore']);
+				out=out.concat(strings['nanobot_lore']);
 				if (m._gt(owned[bot_s], "1e+12")) {
 					out.push('');
 					out.push('You have exactly `B'+owned[bot_s]+'` nanobots.');
@@ -209,12 +214,11 @@ function(context, args)
 			} else {
 				out.push('\nYou are not producing any '+bot_s+' at this time.');
 			}
-			out.concat(strings['ad_math']);
+			out=out.concat(strings['ad_math']);
 			return out;
 		}
 
 	}
-
 
 	//if (caller == 'device') {
 	//	log.push({ t:new Date(), msg:'TEST MESSAGE #1' });
@@ -312,17 +316,17 @@ function(context, args)
 	if (args && args.warp) {
 		if(can_warp(owned)) {
 			if (args.confirm == true) {
-				out.concat(strings['warp_done']);
+				out=out.concat(strings['warp_done']);
 				owned.warp = owned.nanobots.length;
 				for (let types in bots) owned[types] = "0";
 			} else {
 				out.push('By converting the mass of your '+hrc(owned.nanobots, 'nanobots')+' into energy,');
-				out.concat(strings['warp_confirm']);
+				out=out.concat(strings['warp_confirm']);
 				return out;
 			}
 		} else {
 			out.push('Sorry, your '+hrc(owned.nanobots, 'nanobots')+' would not generate enough energy to do any good.');
-			out.concat(strings['warp_deny']);
+			out=out.concat(strings['warp_deny']);
 		}
 	}
 
@@ -426,7 +430,7 @@ function(context, args)
 			let defender_loot = loot.substr(0, l.math.ceil(loot.length * defence_force.length / attack_force.length) ) || "0";
 			if (m._gt(defender_loot, loot)) defender_loot = loot;
 			if (args.attack == caller) {
-				out.concat(strings['attack_self']);
+				out=out.concat(strings['attack_self']);
 			} else {
 				out.push('You attacked '+args.attack+' and received `F'+hrn(attacker_loot)+'` nanite'+(attacker_loot=="1"?'':'s')+'!');
 				owned.nanites = m._add(owned.nanites, attacker_loot);
@@ -448,37 +452,38 @@ function(context, args)
 	}
 
 	//return { ok:false, msg:out };
-	out.concat(strings['bots_header']);
+	out=out.concat(strings['bots_header']);
 	let show_bot = false;
 	let types = Object.keys(bots);
 	for (let i=types.length-1; i>=0; i--) {
-		//out.push(i); continue;
+		//out.push('i='+i+' types[i]='+types[i]+' count='+owned[types[i]]); //continue;
 		if (i < 2 || owned[types[i]] > 0 || owned[types[i-1]] > 0) { show_bot = true; }
 		if (show_bot == false) continue;
 		let count = owned[types[i]] || 0;
-		let cost = bots[types[i]].cost;
-		//if (owned.nanites == '') owned.nanites = "0"; // Bughunt 2017-03-16
+		let cost = m.int(bots[types[i]].cost);
+		if (owned.nanites == '') owned.nanites = "0"; // Bughunt 2017-03-16
 		let max_by_nanites = m._divide( owned.nanites , cost );
 		let max_by_product = m._divide( owned[types[i-1]], cost );
 		let max = i>0 ? (m._lt(max_by_nanites, max_by_product) ? max_by_nanites : max_by_product) : max_by_nanites;
 		let c = owned[types[i]+'_c'] || 0; // Cloning level
 		max = m.f_multiply(max, m._pow2(c));
 		out.push(w(types[i], 12)+' '+w(hrn(count),22,true)+'  device.factory { '+types[i]+': "'+hrn(max)+'" }');
+		//return { ok:false, msg:out };
 	}
-//return { ok:false, msg:out };
 	out.push('');
 	out.push('`PYou have` `F'+hrn(owned.nanites)+'` `Pnanite'+(owned.nanites==1?'':'s')+' and gain` `F'+hrn(mins_per_sec(owned))+'` `Pper '+tick(owned.warp)+'`\n');
+	//return { ok:false, msg:out };
 	out.push('`bTo double the nanite production for '+l.to_gc_str(l.math.ceil((owned.multiplier||1)/l.math.PI))+', use` device.factory { double:true }');
-	out.concat(strings['bots_footer']);
+	out=out.concat(strings['bots_footer']);
 //return { ok:false, msg:out };
 	if (owned.bonus == true) {
-		out.concat(strings['bonus_info']);
+		out=out.concat(strings['bonus_info']);
 	}
 	if (owned.cakebots && m._gt(owned.cakebots, "0")) {
-		out.concat(strings['restart_info']);
+		out=out.concat(strings['restart_info']);
 	}
 	if (can_warp(owned)) {
-		out.concat(strings['warp_info']);
+		out=out.concat(strings['warp_info']);
 	}
 
 	let t = l.get_date_utcsecs();
@@ -489,7 +494,6 @@ function(context, args)
 	    	#db.i({ script:'factory', player:caller, owned:owned, t:t, log:log });
 		}
     }
-
 
 	// Admin stuff
 	if (caller == 'device' && args && args.about == 'players') {
