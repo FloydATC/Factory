@@ -23,26 +23,26 @@ function(context, args)
 	}
 
 	let bots = {
-		nanobots:    { cost:"1" },
-		microbots:   { cost:"10" },
-		minibots:    { cost:"100" },
-		midibots:    { cost:"1000" },
-		maxibots:    { cost:"10000" },
-		megabots:    { cost:"100000" },
-		gigabots:    { cost:"1000000" },
-		terabots:    { cost:"10000000" },
-		petabots:    { cost:"100000000" },
-		exabots:     { cost:"1000000000" },
-		zettabots:   { cost:"10000000000" },
-		yottabots:   { cost:"100000000000" },
-		superbots:   { cost:"1000000000000" },
-		ultrabots:   { cost:"10000000000000" },
-		hyperbots:   { cost:"100000000000000" },
-		metabots:    { cost:"1000000000000000" },
-		clusterbots: { cost:"10000000000000000" },
-		unibots:     { cost:"100000000000000000" },
-		alicebots:   { cost:"1000000000000000000" },
-		cakebots:    { cost:"10000000000000000000" }
+		nanobots:    { cost:"1e0" },
+		microbots:   { cost:"1e1" },
+		minibots:    { cost:"1e2" },
+		midibots:    { cost:"1e3" },
+		maxibots:    { cost:"1e4" },
+		megabots:    { cost:"1e5" },
+		gigabots:    { cost:"1e6" },
+		terabots:    { cost:"1e7" },
+		petabots:    { cost:"1e8" },
+		exabots:     { cost:"1e9" },
+		zettabots:   { cost:"1e10" },
+		yottabots:   { cost:"1e11" },
+		superbots:   { cost:"1e12" },
+		ultrabots:   { cost:"1e13" },
+		hyperbots:   { cost:"1e14" },
+		metabots:    { cost:"1e15" },
+		clusterbots: { cost:"1e16" },
+		unibots:     { cost:"1e17" },
+		alicebots:   { cost:"1e18" },
+		cakebots:    { cost:"1e19" }
 	};
 
 	let gamestate = #db.f({ script:'factory', player:caller }).first();
