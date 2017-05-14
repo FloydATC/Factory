@@ -35,45 +35,45 @@ function(context, args)
 
   let strings = {};
 
-  strings['restart.confirm'] = [
+  strings['restart_confirm'] = [
     '`AATTENTION!` Restarting the game will double your nanite multiplier for free',
     'but everything else will be reset to 0. Please confirm with `Nconfirm`:`Vtrue`',
   ];
 
-  strings['restart.deny'] = [
+  strings['restart_deny'] = [
     "`DWhy would you even want to restart at this time? There will be cake!`",
   ];
 
-  strings['restart.done'] = [
+  strings['restart_done'] = [
     '`LYou restarted the game and doubled your nanite multiplier for free. Congratulations!`',
   ];
 
-  string['restart.info'] = [
+  strings['restart_info'] = [
     '',
     '`JYou have beaten the game and have the option to restart and double your nanite multiplier for free!`',
 		'`JYour current nanobots will be added to your legacy and shown in the leaderboard for all time.`',
 		'device.factory { restart:true }',
   ];
 
-  strings['bonus.done'] = [
+  strings['bonus_done'] = [
     'You have received a free bonus gift:',
   ];
 
-  strings['bonus.info'] = [
+  strings['bonus_info'] = [
     '',
     '`JYou have been awarded a free daily bonus! Redeem with` device.factory { bonus:true }',
   ];
 
-  strings['reset.confirm'] = [
+  strings['reset_confirm'] = [
     "This will delete your device.factory data, including any purchases. Please confirm:true",
   ];
 
-  strings['lb.header'] = [
+  strings['lb_header'] = [
     '',
     'Rank  Player                           Total robot value      Legacy',
   ];
 
-  strings['lb.footer'] = [
+  strings['lb_footer'] = [
     '',
     '`bLegacy: Number of nanobots accumulated across restarts, ie. after beating the game.`',
   ];
@@ -99,29 +99,29 @@ function(context, args)
     "Good luck!",
   ];
 
-  strings['nanobot.lore'] = [
+  strings['nanobot_lore'] = [
     'The nanobot is your lowest tier of robots, they do not produce anything.',
     'They are, however, incredibly useful for attacking other players with!',
   ];
 
-  strings['ad.math'] = [
+  strings['ad_math'] = [
     '',
     'The game now uses include.math for UNLIMITED arithmetics everywhere.',
   ];
 
-  strings['ad.factory'] = [
+  strings['ad_factory'] = [
     // Note: One line only!
     "Hi! I'm playing device.factory, a FULLSEC Free-to-Play incremental multiplayer game about building robots that build robots, and I want you to join too!"
   ];
 
-  strings['warp.done'] = [
+  strings['warp_done'] = [
     '`JYour factory turns completely silent for a brief moment,`',
     '`Jbefore a high pitched thunder rips every last one of your robots out of existence.`',
     '',
     '`JYou have successfully distorted time within your factory.`',
   ];
 
-  strings['warp.confirm'] = [
+  strings['warp_confirm'] = [
     // 'By converting the mass of your '+hrc(owned.nanobots, 'nanobots')+' into energy,'
     'you can distort the passage of time within your factory in a way that will',
     'effectively speed up production of both robots and nanites.',
@@ -133,26 +133,26 @@ function(context, args)
     'This should be perfectly safe but as a formality, please confirm:true',
   ];
 
-  strings['warp.deny'] = [
+  strings['warp_deny'] = [
     // 'Sorry, your '+hrc(owned.nanobots, 'nanobots')+' would not generate enough energy to do any good.'
     'Produce more and then try again.',
   ];
 
-  strings['warp.info'] = [
+  strings['warp_info'] = [
     '',
     '`JYou have enough nanobots to convert them into energy with` device.factory { warp:true }',
   ];
 
-  strings['attack.self'] = [
+  strings['attack_self'] = [
     'You attacked yourself and lost.',
   ];
 
-  strings['bots.header'] = [
+  strings['bots_header'] = [
     '',
     '`PRobot type                    Owned  Create maximum`',
   ];
 
-  strings['bots.footer'] = [
+  strings['bots_footer'] = [
     '`bOptional: include` `Nxfer:``V#s.`accts.xfer_gc_to `bto avoid using` escrow.confirm',
 	  '`bFor help on things like pvp, upgrades etc., use` device.factory { help:true }',
 	  '`bRefresh with` device.factory {}',
