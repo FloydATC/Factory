@@ -10,6 +10,8 @@ function(context, args)
 		out.push("");
 	}
 
+	let bots = #db.f({ script:'factory', file:'bots' }).first().obj;
+  let strings = #db.f({ script:'factory', file:'strings' }).first().obj;
 
 	//if (caller != 'device' && caller != 'lodash') {
 	//	out.push('The game is closed for maintenance, sorry for the inconvenience.\nPlease try again in a few moments.');
@@ -22,28 +24,6 @@ function(context, args)
 		out.push('`DWARNING: Playing as '+caller+', changes will NOT be saved!`');
 	}
 
-	let bots = {
-		nanobots:    { cost:"1e0" },
-		microbots:   { cost:"1e1" },
-		minibots:    { cost:"1e2" },
-		midibots:    { cost:"1e3" },
-		maxibots:    { cost:"1e4" },
-		megabots:    { cost:"1e5" },
-		gigabots:    { cost:"1e6" },
-		terabots:    { cost:"1e7" },
-		petabots:    { cost:"1e8" },
-		exabots:     { cost:"1e9" },
-		zettabots:   { cost:"1e10" },
-		yottabots:   { cost:"1e11" },
-		superbots:   { cost:"1e12" },
-		ultrabots:   { cost:"1e13" },
-		hyperbots:   { cost:"1e14" },
-		metabots:    { cost:"1e15" },
-		clusterbots: { cost:"1e16" },
-		unibots:     { cost:"1e17" },
-		alicebots:   { cost:"1e18" },
-		cakebots:    { cost:"1e19" }
-	};
 
 	let gamestate = #db.f({ script:'factory', player:caller }).first();
 	//out.push('res='+JSON.stringify(gamestate));
@@ -75,7 +55,7 @@ function(context, args)
 
 		// Free spin?
 		if (args.bonus === true && owned.bonus === true) {
-			out.push('You have received a free bonus gift:');
+			out.concat(strings['bonus.done']);
 			let r = l.rand_int(1,5);
 			//out.push('r='+r);
 			switch (r) {
@@ -114,7 +94,7 @@ function(context, args)
 			//if (caller != 'device') return "Hang on, this feature is being tested. Please try again in a few moments.";
 			if (m._gt(owned.cakebots, "0")) {
 				if (args.confirm == true) {
-					out.push('`LYou restarted the game and doubled your nanite multiplier for free. Congratulations!`');
+					out.concat(strings['restart.done']);
 					let multiplier = (owned.multiplier || 1) * 2;
 					let restarts = (owned.restarts || 1);
 					let legacy = m._add(owned.nanobots, (owned.legacy || "0"));
@@ -122,12 +102,11 @@ function(context, args)
 					recalc(gamestate);
 					owned = gamestate.owned;
 				} else {
-					out.push('`AATTENTION!` Restarting the game will double your nanite multiplier for free');
-					out.push('but everything else will be reset to 0. Please confirm with `Nconfirm`:`Vtrue`');
+					out.concat(strings['restart.confirm']);
 					return out;
 				}
 			} else {
-				out.push("`DWhy would you even want to restart at this time? There will be cake!`");
+				out.concat(strings['restart.deny']);
 			}
 		}
 
@@ -136,7 +115,7 @@ function(context, args)
 				#db.r({ script:'factory', player:context.caller });
 				return "Game reset.";
 			} else {
-				return "This will delete your device.factory data, including any purchases. Please confirm:true";
+				out.concat(strings['reset.confirm']);
 			}
 		}
 
@@ -149,9 +128,8 @@ function(context, args)
 			}
 			let res = unsorted.sort( function(a,b) { return m._cmp(b.score, a.score) } );
 			//out.push('res='+JSON.stringify(res));
-			out.push('');
 			let found = false;
-			out.push('Rank  Player                           Total robot value      Legacy');
+			out.concat(strings['lb.header']);
 			for (let i in res) {
 				let acct = res[i];
 				if (acct.player != caller) {
@@ -176,30 +154,12 @@ function(context, args)
 				if (acct.player == caller) found = true;
 				//out.push('device.factory { attack:"'+acct.player+'", with:'+owned.nanobots+' }');
 			}
-			out.push('');
-			out.push('`bLegacy: Number of nanobots accumulated across restarts, ie. after beating the game.`');
+			out.concat(strings['lb.footer']);
 			return out;
 		}
 
 		if (args.help == true) {
-			out.push("This game lets you create robots that automatically create smaller robots.");
-			out.push("Creating a bigger robot consumes a number of smaller robots plus nanites.");
-			out.push("You earn free nanites over time, and you can buy multipliers to speed things up.");
-			out.push("");
-			out.push("To view detailed information about a robot type, upgrade it and more, use for example");
-			out.push("device.factory { info:\"nanobots\" }");
-			out.push("");
-			out.push("You can also attack other players if they have a device.factory");
-			out.push("Recycle their robots into nanites to help boost your own ranks!");
-			out.push("Example: device.factory { attack:\"playername\", nanobots:1000 }");
-			out.push("");
-			out.push("Keep in mind that you need to send an attack force large enough to");
-			out.push("penetrate your opponent's defenses but small enough to make a net profit.");
-			out.push("");
-			out.push("Want to see how well you're doing compared to other players?");
-			out.push("device.factory { info:\"leaderboard\" }");
-			out.push("");
-			out.push("Good luck!");
+			out.concat(strings['help']);
 			return out;
 		}
 
@@ -227,8 +187,7 @@ function(context, args)
 				let cost = bots[bot_s].cost;
 				out.push('\nManually creating '+hrc(p2c, bot_s)+' requires '+hrc(cost, sub_s)+' and '+hrc(cost, 'nanites')+' at this time.');
 			} else {
-				out.push('The nanobot is your lowest tier of robots, they do not produce anything.');
-				out.push('They are, however, incredibly useful for attacking other players with!');
+				out.concat(strings['nanobot.lore']);
 				if (m._gt(owned[bot_s], "1e+12")) {
 					out.push('');
 					out.push('You have exactly `B'+owned[bot_s]+'` nanobots.');
@@ -250,9 +209,7 @@ function(context, args)
 			} else {
 				out.push('\nYou are not producing any '+bot_s+' at this time.');
 			}
-			out.push('');
-			out.push('The game now uses include.math for UNLIMITED arithmetics everywhere.');
-
+			out.concat(strings['ad.math']);
 			return out;
 		}
 
@@ -355,27 +312,17 @@ function(context, args)
 	if (args && args.warp) {
 		if(can_warp(owned)) {
 			if (args.confirm == true) {
-				out.push('`JYour factory turns completely silent for a brief moment,`');
-				out.push('`Jbefore a high pitched thunder rips every last one of your robots out of existence.`');
-				out.push('');
-				out.push('`JYou have successfully distorted time within your factory.`');
+				out.concat(strings['warp.done']);
 				owned.warp = owned.nanobots.length;
 				for (let types in bots) owned[types] = "0";
 			} else {
 				out.push('By converting the mass of your '+hrc(owned.nanobots, 'nanobots')+' into energy,');
-				out.push('you can distort the passage of time within your factory in a way that will');
-				out.push('effectively speed up production of both robots and nanites.');
-				out.push('');
-				out.push('Attacking other players and defending against attacks will not be affected.');
-				out.push('');
-				out.push('`bDISCLAIMER: Possible side-effects include headache, light nausea and/or dizziness. There have been unsubstantiated claims of all robots within affected factories being annihilated in the process. By confirming, you agree to take full responsibility for any consequences of tampering with reality.`');
-				out.push('');
-				out.push('This should be perfectly safe but as a formality, please confirm:true');
+				out.concat(strings['warp.confirm']);
 				return out;
 			}
 		} else {
 			out.push('Sorry, your '+hrc(owned.nanobots, 'nanobots')+' would not generate enough energy to do any good.');
-			out.push('Produce more and then try again.');
+			out.concat(strings['warp.deny']);
 		}
 	}
 
@@ -479,7 +426,7 @@ function(context, args)
 			let defender_loot = loot.substr(0, l.math.ceil(loot.length * defence_force.length / attack_force.length) ) || "0";
 			if (m._gt(defender_loot, loot)) defender_loot = loot;
 			if (args.attack == caller) {
-				out.push('You attacked yourself and lost.');
+				out.concat(strings['attack.self']);
 			} else {
 				out.push('You attacked '+args.attack+' and received `F'+hrn(attacker_loot)+'` nanite'+(attacker_loot=="1"?'':'s')+'!');
 				owned.nanites = m._add(owned.nanites, attacker_loot);
@@ -497,11 +444,11 @@ function(context, args)
 	}
 
     if (args && args.invite) {
-		#s.chats.tell({ to:args.invite, msg:"Hi! I'm playing device.factory, a FULLSEC Free-to-Play incremental multiplayer game about building robots that build robots, and I want you to join too!" });
+		#s.chats.tell({ to:args.invite, msg:strings['ad.factory'][0] });
 	}
 
-//return { ok:false, msg:out };
-	out.push('\n`PRobot type                    Owned  Create maximum`');
+	//return { ok:false, msg:out };
+	out.concat(strings['bots.header']);
 	let show_bot = false;
 	let types = Object.keys(bots);
 	for (let i=types.length-1; i>=0; i--) {
@@ -522,20 +469,16 @@ function(context, args)
 	out.push('');
 	out.push('`PYou have` `F'+hrn(owned.nanites)+'` `Pnanite'+(owned.nanites==1?'':'s')+' and gain` `F'+hrn(mins_per_sec(owned))+'` `Pper '+tick(owned.warp)+'`\n');
 	out.push('`bTo double the nanite production for '+l.to_gc_str(l.math.ceil((owned.multiplier||1)/l.math.PI))+', use` device.factory { double:true }');
-	out.push('`bOptional: include` `Nxfer:``V#s.`accts.xfer_gc_to `bto avoid using` escrow.confirm');
-	out.push('`bFor help on things like pvp, upgrades etc., use` device.factory { help:true }');
-	out.push('`bRefresh with` device.factory {}');
+	out.concat(strings['bots.footer']);
 //return { ok:false, msg:out };
 	if (owned.bonus == true) {
-		out.push('\n`JYou have been awarded a free daily bonus! Redeem with` device.factory { bonus:true }');
+		out.concat(strings['bonus.info']);
 	}
 	if (owned.cakebots && m._gt(owned.cakebots, "0")) {
-		out.push('\n`JYou have beaten the game and have the option to restart and double your nanite multiplier for free!`');
-		out.push('`JYour current nanobots will be added to your legacy and shown in the leaderboard for all time.`');
-		out.push('device.factory { restart:true }');
+		out.concat(strings['restart.info']);
 	}
 	if (can_warp(owned)) {
-		out.push('\n`JYou have enough nanobots to convert them into energy with` device.factory { warp:true }');
+		out.concat(strings['warp.info']);
 	}
 
 	let t = l.get_date_utcsecs();
