@@ -126,7 +126,7 @@ function(context, args)
 
 		// SHow leaderboard
 		if (args.info == 'leaderboard') {
-			let unsorted = #db.f({ script:'factory' }).array();
+			let unsorted = #db.f({ script:'factory', player:{ $exists:true } }).array();
 			for (let i in unsorted) {
 				recalc(unsorted[i]);
 				if (unsorted[i].player == 'device') unsorted[i].score = "0";
