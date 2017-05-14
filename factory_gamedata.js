@@ -162,4 +162,5 @@ function(context, args)
   #db.r({ script:'factory', file:'strings' });
   #db.i({ script:'factory', file:'strings', obj:strings });
 
+  return { ok:true };
 }
