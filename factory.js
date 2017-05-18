@@ -128,7 +128,15 @@ function(context, args)
 		if (args.info == 'leaderboard') {
 			let unsorted = #db.f({ script:'factory', player:{ $exists:true } }).array();
 			for (let i in unsorted) {
-				recalc(unsorted[i]);
+				try {
+					recalc(unsorted[i]);
+				}
+				catch(e) {
+					if (caller == 'device') {
+						out.push('exception while recalcing "'+unsorted[i].player+'": '+e+'\n'+JSON.stringify(unsorted[i]));
+						return out;
+					}
+				}
 				if (unsorted[i].player == 'device') unsorted[i].score = "0";
 			}
 			let res = unsorted.sort( function(a,b) { return m._cmp(b.score, a.score) } );
@@ -548,11 +556,10 @@ function(context, args)
 	function recalc(acct, debug) {
 		// Update game state
 		let delta = m._int((l.get_date_utcsecs() - acct.t) * (acct.owned.warp || 1) / 1000);
-		//out.push('delta='+delta);
 		if (typeof acct.owned.nanites == 'string') {
-			let n = acct.owned.nanites;
-			// Workaround for unexplained failure 2017-03-13
-			n = n.replace(/\D/g, "");
+			let n = acct.owned.nanites || "0";
+			// Workaround for unexplained failure 2017-03-13 and 2017-05-18
+			acct.owned.nanites = n.replace(/\D/g, "");
 		}
 		let n = m._int(acct.owned.nanites);
 		let nps = m._int(mins_per_sec(acct.owned));
